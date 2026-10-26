@@ -1,0 +1,41 @@
+{
+  "name": "steel-squad",
+  "productName": "STEEL SQUAD",
+  "version": "0.1.0",
+  "private": true,
+  "description": "2D co-op mecha action (shared-screen, 1-4 players)",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173",
+    "typecheck": "tsc --noEmit",
+    "assets": "python3 tools/process_assets.py",
+    "electron": "electron .",
+    "dist:win": "npm run build && electron-builder --win --dir",
+    "dist:linux": "npm run build && electron-builder --linux --dir"
+  },
+  "build": {
+    "appId": "com.example.steelsquad",
+    "productName": "STEEL SQUAD",
+    "files": [
+      "dist/**",
+      "electron/**"
+    ],
+    "directories": {
+      "output": "release"
+    }
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-jp": "^5.3.1",
+    "@fontsource/rajdhani": "^5.3.0",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5"
+  }
+}

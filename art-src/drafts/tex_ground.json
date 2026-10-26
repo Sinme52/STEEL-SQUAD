@@ -1,0 +1,22 @@
+{
+  "prompt": "Seamless tileable texture for side-scrolling game terrain blocks, front view: heavy reinforced concrete and riveted steel plates, cracks, grime and rust stains, dark grey-brown, evenly lit, no perspective, no objects, no text. Must tile seamlessly in both directions.",
+  "size": "1024x1024",
+  "bg": "opaque",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_2e863bee3b3f4c6c8455b02a29270a60",
+  "elapsed_sec": 17.6,
+  "usage": {
+    "input_tokens": 63,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 63
+    },
+    "output_tokens": 439,
+    "output_tokens_details": {
+      "image_tokens": 439,
+      "text_tokens": 0
+    },
+    "total_tokens": 502
+  }
+}

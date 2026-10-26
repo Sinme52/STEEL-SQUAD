@@ -1,0 +1,23 @@
+{
+  "prompt": "Using the mecha in the reference image, draw ONLY its huge riveted tower shield as a separate object (identical colors, markings and painting style), seen from the side, standing vertical, the whole shield visible with margin, centered, on a fully transparent background. No robot, no arm, no text, no shadow.",
+  "size": "1024x1536",
+  "bg": "transparent",
+  "ref": "mech_assault_ref",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_ca716151b3984fb8bc2b2b36a433f2ab",
+  "elapsed_sec": 21.2,
+  "usage": {
+    "input_tokens": 1618,
+    "input_tokens_details": {
+      "image_tokens": 1536,
+      "text_tokens": 82
+    },
+    "output_tokens": 343,
+    "output_tokens_details": {
+      "image_tokens": 343,
+      "text_tokens": 0
+    },
+    "total_tokens": 1961
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "prompt": "Character bust portrait for a military mecha game, 1990s anime-influenced realistic illustration, painterly, head and shoulders, three-quarter view facing right, dramatic lighting, dark slate grey background with subtle hangar haze. A battle-hardened veteran man in his late forties, broad build, buzz-cut grey hair, scar across the cheek, calm stare. Wearing a olive drab and orange pilot suit with a headset. No text, no logos.",
+  "size": "1024x1024",
+  "bg": "opaque",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_fa9bb9bcb5f4450891060aa1cf899efc",
+  "elapsed_sec": 19.0,
+  "usage": {
+    "input_tokens": 101,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 101
+    },
+    "output_tokens": 439,
+    "output_tokens_details": {
+      "image_tokens": 439,
+      "text_tokens": 0
+    },
+    "total_tokens": 540
+  }
+}

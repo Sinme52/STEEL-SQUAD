@@ -1,0 +1,22 @@
+{
+  "prompt": "Character bust portrait for a military mecha game, 1990s anime-influenced realistic illustration, painterly, head and shoulders, three-quarter view facing right, dramatic lighting, dark slate grey background with subtle hangar haze. A composed woman in her thirties, short silver hair, sharp eyes, slight confident smile. Wearing a desert tan and red pilot suit with a headset. No text, no logos.",
+  "size": "1024x1024",
+  "bg": "opaque",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_1a92dc2abf234804aede885fc2491872",
+  "elapsed_sec": 20.3,
+  "usage": {
+    "input_tokens": 90,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 90
+    },
+    "output_tokens": 439,
+    "output_tokens_details": {
+      "image_tokens": 439,
+      "text_tokens": 0
+    },
+    "total_tokens": 529
+  }
+}

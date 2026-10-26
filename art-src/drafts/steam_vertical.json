@@ -1,0 +1,22 @@
+{
+  "prompt": "Vertical poster key art for a 2D co-op mecha action game: a heavy olive military mecha with a huge riveted tower shield standing in front, three squad mates behind it (tan artillery mecha firing missiles, slim dark grey scout mecha jumping with thrusters, steel blue support mecha), burning industrial ruins at dusk, a colossal orbital elevator tower rising into the violet-orange sky. Leave the top 25 percent as calm sky for a title. Painterly, epic, 1990s Japanese real-robot style. No text, no logos. Absolutely no emblems, insignia, faction symbols, crests, flags or banners anywhere; keep armor surfaces plain apart from simple stripes and weathering.",
+  "size": "1024x1536",
+  "bg": "opaque",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_910a395eab3d4b628fd4ffcd29953a6f",
+  "elapsed_sec": 23.3,
+  "usage": {
+    "input_tokens": 152,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 152
+    },
+    "output_tokens": 343,
+    "output_tokens_details": {
+      "image_tokens": 343,
+      "text_tokens": 0
+    },
+    "total_tokens": 495
+  }
+}

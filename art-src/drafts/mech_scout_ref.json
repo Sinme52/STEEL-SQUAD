@@ -1,0 +1,22 @@
+{
+  "prompt": "Full body of a slim, lightweight, fast reconnaissance mecha: narrow armor, long sensor antennas on the head, large thrusters on the back, a long sniper rifle in the near arm, dark gunmetal grey paint with cyan accent stripes and cyan sensor eye. Strict side view (profile), facing right, standing in a neutral pose with the near arm holding the weapon pointing straight forward horizontally. The whole robot is visible with empty margin around it, centered, on a fully transparent background, no ground, no shadow. 2D side-scrolling video game art, hand-painted digital illustration, realistic 1990s Japanese real-robot military mecha style, gritty and grounded, weathered paint, chipped edges, panel lines, hydraulic pistons, small stencil markings, strong readable silhouette, soft light from the upper left. Original design, no logos, no text, no letters, no numbers.",
+  "size": "1024x1536",
+  "bg": "transparent",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_2d5646fd76d64464a34727fd75465cd7",
+  "elapsed_sec": 21.2,
+  "usage": {
+    "input_tokens": 187,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 187
+    },
+    "output_tokens": 343,
+    "output_tokens_details": {
+      "image_tokens": 343,
+      "text_tokens": 0
+    },
+    "total_tokens": 530
+  }
+}

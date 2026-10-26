@@ -1,0 +1,22 @@
+{
+  "prompt": "Cinematic key art for a 2D co-op mecha action game: a squad of four distinct military mechas charging together across a burning battlefield at dusk - a heavy olive mecha with a huge shield in front, a tan artillery mecha firing a missile salvo, a slim dark grey scout mecha jumping with thrusters, a steel blue support mecha with a repair arm - against a hostile crimson mono-eye mecha army, a colossal orbital elevator tower in the far background, dramatic orange and violet sky, smoke and sparks. Painterly, epic, 1990s Japanese real-robot style. Leave calm empty sky space in the upper left third for a title. No text, no logos. Absolutely no emblems, insignia, faction symbols, crests, flags or banners anywhere; keep armor surfaces plain apart from simple stripes and weathering.",
+  "size": "1536x864",
+  "bg": "opaque",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_6fc73ec094f848ef8ddd3b4a6359133e",
+  "elapsed_sec": 23.4,
+  "usage": {
+    "input_tokens": 180,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 180
+    },
+    "output_tokens": 280,
+    "output_tokens_details": {
+      "image_tokens": 280,
+      "text_tokens": 0
+    },
+    "total_tokens": 460
+  }
+}

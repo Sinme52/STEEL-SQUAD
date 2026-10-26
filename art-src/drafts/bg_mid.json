@@ -1,0 +1,22 @@
+{
+  "prompt": "Wide panoramic middle layer for a side-scrolling action game parallax background: a dark silhouette band of a ruined industrial city at dusk - broken refinery towers, smokestacks, cranes, collapsed buildings, power pylons - occupying only the lower half of the image, with a few small fires and rim light from an orange sky. The entire upper half is fully transparent, and everything above the skyline is transparent. Painterly, desaturated blue-violet tones. No text, no people.",
+  "size": "3072x1024",
+  "bg": "transparent",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_7edab7bef1cb47a591e843a2c6038925",
+  "elapsed_sec": 16.4,
+  "usage": {
+    "input_tokens": 104,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 104
+    },
+    "output_tokens": 247,
+    "output_tokens_details": {
+      "image_tokens": 247,
+      "text_tokens": 0
+    },
+    "total_tokens": 351
+  }
+}

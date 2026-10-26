@@ -1,0 +1,22 @@
+{
+  "prompt": "Game title logo reading exactly \"STEEL SQUAD\" in bold, heavy, slightly slanted military stencil-inspired metallic letters with brushed steel texture, orange hot edge glow, scratches, a thin hazard-stripe underline. Only the logo, centered, on a fully transparent background, no other text.",
+  "size": "1536x512",
+  "bg": "transparent",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_c70d63774da2450eacfa7058bbbd4bdf",
+  "elapsed_sec": 14.7,
+  "usage": {
+    "input_tokens": 66,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 66
+    },
+    "output_tokens": 134,
+    "output_tokens_details": {
+      "image_tokens": 134,
+      "text_tokens": 0
+    },
+    "total_tokens": 200
+  }
+}

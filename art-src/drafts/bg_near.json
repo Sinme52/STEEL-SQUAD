@@ -1,0 +1,22 @@
+{
+  "prompt": "Wide panoramic near layer for a side-scrolling action game parallax background: close dark silhouettes of a military industrial zone - pipes, chain-link fences, broken walls, girders, sandbags, wrecked trucks - occupying only the lower 40 percent of the image, very dark with slight orange rim light. Everything above is fully transparent. Painterly. No text, no people.",
+  "size": "3072x1024",
+  "bg": "transparent",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_02398b89781f4296b7a6200ba3e8035a",
+  "elapsed_sec": 16.4,
+  "usage": {
+    "input_tokens": 83,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 83
+    },
+    "output_tokens": 247,
+    "output_tokens_details": {
+      "image_tokens": 247,
+      "text_tokens": 0
+    },
+    "total_tokens": 330
+  }
+}

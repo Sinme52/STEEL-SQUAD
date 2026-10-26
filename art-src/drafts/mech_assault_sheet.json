@@ -1,0 +1,23 @@
+{
+  "prompt": "Using the mecha in the reference image, create a 2D cutout-animation parts sheet of THIS SAME mecha (identical design, colors, markings and painting style), every part seen exactly from the side, facing right. Draw each part separately and NOT touching, with wide empty gaps between parts, on a fully transparent background, arranged in one row from left to right: (1) TORSO: chest, head, hips and backpack as one piece, with NO arms and NO legs; (2) ARM WITH WEAPON: shoulder, arm and the weapon as one piece, held horizontally, the weapon pointing right; (3) THIGH: the upper leg only, standing vertical, hip joint at the top, knee joint at the bottom; (4) SHIN: the lower leg only, standing vertical, knee joint at the top, ankle at the bottom; (5) FOOT: the foot only, flat on its sole, toes pointing right. All parts at the same scale as the reference. No text, no labels, no numbers, no shadows, no background.",
+  "size": "1536x1024",
+  "bg": "transparent",
+  "ref": "mech_assault_ref",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_f0c0e9a6fd964595a8b795cb6dd3cd37",
+  "elapsed_sec": 23.6,
+  "usage": {
+    "input_tokens": 1774,
+    "input_tokens_details": {
+      "image_tokens": 1536,
+      "text_tokens": 238
+    },
+    "output_tokens": 343,
+    "output_tokens_details": {
+      "image_tokens": 343,
+      "text_tokens": 0
+    },
+    "total_tokens": 2117
+  }
+}

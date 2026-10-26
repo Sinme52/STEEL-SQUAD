@@ -1,0 +1,22 @@
+{
+  "prompt": "Full body of a gigantic four-legged walking tank boss mecha: a massive armored hull with a long twin-barrel main cannon pointing forward, missile hatches on top, a glowing orange reactor core vent on the side, four heavy articulated mechanical legs. Strict side view facing right, whole machine visible with empty margin, on a fully transparent background, no ground, no shadow. Dark gunmetal and rust-orange paint. 2D side-scrolling video game art, hand-painted digital illustration, realistic 1990s Japanese real-robot military mecha style, gritty and grounded, weathered paint, chipped edges, panel lines, hydraulic pistons, small stencil markings, strong readable silhouette, soft light from the upper left. Original design, no logos, no text, no letters, no numbers.",
+  "size": "1536x1024",
+  "bg": "transparent",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_4d30b73d01544bb1b469537cc4bc3367",
+  "elapsed_sec": 23.9,
+  "usage": {
+    "input_tokens": 166,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 166
+    },
+    "output_tokens": 343,
+    "output_tokens_details": {
+      "image_tokens": 343,
+      "text_tokens": 0
+    },
+    "total_tokens": 509
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "prompt": "Wide panoramic background painting for a side-scrolling action game, far layer: a war-torn continent at dusk, burning orange and violet sky with heavy clouds, distant mountain ranges, and far away a colossal orbital elevator tower rising straight up into the sky with blinking lights. Atmospheric perspective, no foreground objects, the lower 25 percent is hazy distant plains. Painterly, cinematic, muted military palette. No text, no people, no vehicles.",
+  "size": "3072x1024",
+  "bg": "opaque",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_3bacb2be10c94dba80713199496c6b09",
+  "elapsed_sec": 18.0,
+  "usage": {
+    "input_tokens": 96,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 96
+    },
+    "output_tokens": 247,
+    "output_tokens_details": {
+      "image_tokens": 247,
+      "text_tokens": 0
+    },
+    "total_tokens": 343
+  }
+}

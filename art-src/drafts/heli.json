@@ -1,0 +1,22 @@
+{
+  "prompt": "A hostile attack helicopter gunship, strict side view facing right, slim armored fuselage, stub wings with rocket pods, chin gun turret, tail rotor, dark crimson and black paint. Draw ONLY the rotor hub on top, WITHOUT the main rotor blades. Whole aircraft visible with margin, on a fully transparent background, no shadow. 2D side-scrolling video game art, hand-painted digital illustration, realistic 1990s Japanese real-robot military mecha style, gritty and grounded, weathered paint, chipped edges, panel lines, hydraulic pistons, small stencil markings, strong readable silhouette, soft light from the upper left. Original design, no logos, no text, no letters, no numbers.",
+  "size": "1536x1024",
+  "bg": "transparent",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_0c102fe2f2414b969e2d045c2a6ef19b",
+  "elapsed_sec": 20.1,
+  "usage": {
+    "input_tokens": 149,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 149
+    },
+    "output_tokens": 343,
+    "output_tokens_details": {
+      "image_tokens": 343,
+      "text_tokens": 0
+    },
+    "total_tokens": 492
+  }
+}

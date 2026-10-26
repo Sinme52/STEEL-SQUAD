@@ -1,0 +1,23 @@
+{
+  "prompt": "Using the walking tank in the reference image, create a 2D cutout-animation parts sheet of THIS SAME machine (identical design, colors and painting style), side view facing right. Draw each part separately and NOT touching, with wide empty gaps, on a fully transparent background, in one row from left to right: (1) HULL: the main body with the twin-barrel cannon, with NO legs; (2) UPPER LEG: one upper leg segment, vertical, hip joint at the top, knee joint at the bottom; (3) LOWER LEG: one lower leg segment with its foot pad, vertical, knee joint at the top, foot at the bottom. Same scale as the reference. No text, no labels, no shadows, no background.",
+  "size": "1536x1024",
+  "bg": "transparent",
+  "ref": "boss_ref",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_09d7a97e28ba4ad1865d29a6fc91c7bc",
+  "elapsed_sec": 22.9,
+  "usage": {
+    "input_tokens": 1709,
+    "input_tokens_details": {
+      "image_tokens": 1536,
+      "text_tokens": 173
+    },
+    "output_tokens": 343,
+    "output_tokens_details": {
+      "image_tokens": 343,
+      "text_tokens": 0
+    },
+    "total_tokens": 2052
+  }
+}

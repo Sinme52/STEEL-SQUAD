@@ -1,0 +1,22 @@
+{
+  "prompt": "Two separate parts of a hostile heavy gun emplacement for a side-scrolling game, side view, NOT touching, with a wide gap between them, on a fully transparent background: on the left, (1) a squat armored concrete and steel bunker base with a round turret ring on top; on the right, (2) the rotating gun head: a compact armored housing with twin barrels pointing right. Dark crimson and black paint with hazard markings. 2D side-scrolling video game art, hand-painted digital illustration, realistic 1990s Japanese real-robot military mecha style, gritty and grounded, weathered paint, chipped edges, panel lines, hydraulic pistons, small stencil markings, strong readable silhouette, soft light from the upper left. Original design, no logos, no text, no letters, no numbers.",
+  "size": "1536x1024",
+  "bg": "transparent",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_c32ada9566524d4c817fc8269a4403d1",
+  "elapsed_sec": 21.5,
+  "usage": {
+    "input_tokens": 172,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 172
+    },
+    "output_tokens": 343,
+    "output_tokens_details": {
+      "image_tokens": 343,
+      "text_tokens": 0
+    },
+    "total_tokens": 515
+  }
+}

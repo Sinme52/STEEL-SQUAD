@@ -1,0 +1,22 @@
+{
+  "prompt": "Ultra-wide cinematic banner painting for a 2D co-op mecha action game: four distinct military mechas (heavy olive mecha with tower shield, tan artillery mecha with missile pod, slim dark grey scout mecha with thrusters, steel blue support mecha with crane arm) advancing in a line across a burning industrial battlefield at dusk, crimson mono-eye enemy mechas and a giant four-legged walking tank in the haze, a colossal orbital elevator tower in the far background, orange and violet sky. Subjects centered in the middle third, calm sky at the top. Painterly, 1990s Japanese real-robot style. No text, no logos. Absolutely no emblems, insignia, faction symbols, crests, flags or banners anywhere; keep armor surfaces plain apart from simple stripes and weathering.",
+  "size": "3744x1248",
+  "bg": "opaque",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "medium",
+  "request_id": "req_d98033c3816041e6972c95802acd8ac6",
+  "elapsed_sec": 25.6,
+  "usage": {
+    "input_tokens": 171,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 171
+    },
+    "output_tokens": 321,
+    "output_tokens_details": {
+      "image_tokens": 321,
+      "text_tokens": 0
+    },
+    "total_tokens": 492
+  }
+}

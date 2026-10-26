@@ -1,0 +1,9 @@
+node_modules/
+dist/
+release/
+# 生成した元画像（PNG）は大きいので入れない。drafts/ に WebP で保存してある
+art-src/raw/
+art-src/rejected/
+art-src/preview/
+playtest-out/
+scenario-out/
