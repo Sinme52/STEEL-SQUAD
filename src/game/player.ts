@@ -1,7 +1,7 @@
 // プレイヤーの機体・パイロット・参加者。
 import Phaser from 'phaser';
 import {
-  BRACE, MISSILES, PILOT, RECON, REPAIR, RESPAWN_TIME, ROLE_DEFS, SHIELD, WRECK_REPAIR_TIME,
+  BOOST, BRACE, GRAVITY, MECH_GRAVITY, MISSILES, PILOT, RECON, REPAIR, RESPAWN_TIME, ROLE_DEFS, SHIELD, WRECK_REPAIR_TIME,
   levelDamageMul, levelRateMul, weaponLevel, type RoleDef, type RoleId, type WeaponDef,
 } from './data';
 import { MechRig } from './rig';
@@ -141,7 +141,18 @@ export class PlayerMech implements Hittable {
   repair = 0; // 撃破後の修理進み具合 0..1
   private fireCd = 0;
   skillCd = 0;
-  fuel: number;
+  gauge: number; // ブーストゲージ（秒）
+  overheat = false;
+  boosting = false;
+  private boostDir = 1;
+  private regenWait = 0;
+  private windup = 0; // ジャンプ前の沈み込み
+  private landLock = 0; // 重い着地の硬直
+  private turnScale = 1; // 振り向きの見た目（-1..1）
+  private lean = 0;
+  private stepIdx = 0;
+  private skidT = 0;
+  private hopT = 0;
   private airJumps = 0;
   private thrust = 0;
   private walkPhase = 0;
@@ -169,7 +180,8 @@ export class PlayerMech implements Hittable {
     this.rig.setDepth(20 + owner.index);
     const h = this.rig.d.height * 0.88;
     this.body = { x, y, w: this.def.bodyW, h, vx: 0, vy: 0, onGround: false, hitWall: 0 };
-    this.fuel = this.def.fuel;
+    this.gauge = this.def.boostGauge;
+    this.body.gravityScale = MECH_GRAVITY;
     this.label = scene.add.text(0, 0, `${owner.index + 1}P`, {
       fontFamily: 'Rajdhani, sans-serif', fontSize: '22px', fontStyle: 'bold',
       color: '#' + this.def.color.toString(16).padStart(6, '0'), stroke: '#000', strokeThickness: 4,
@@ -275,7 +287,6 @@ export class PlayerMech implements Hittable {
         this.aim = Phaser.Math.Clamp(local, -1.45, 1.0);
       } else {
         if (inp.moveY) this.aim = Phaser.Math.Clamp(this.aim + inp.moveY * 2.4 * dt, -1.45, 1.0);
-        if (moveX && !inp.fire && !this.shieldUp) this.facing = moveX > 0 ? 1 : -1;
       }
 
       // 盾（アサルト）
@@ -295,24 +306,51 @@ export class PlayerMech implements Hittable {
         this.braced = this.braceT >= BRACE.delay;
       }
 
-      // ジャンプとブースト
-      if (inp.jumpPressed) {
+      // ジャンプ（沈み込んでから跳ぶ）とホバー
+      if (inp.jumpPressed && this.windup <= 0 && this.landLock <= 0) {
         if (b.onGround && inp.down && this.scene.onOneWay(b)) {
           b.dropThrough = 0.25;
         } else if (b.onGround) {
-          b.vy = -this.def.jump;
-          audio.play('jump', 0.6);
-          this.scene.effects.dustFx(b.x, b.y, 5);
+          this.windup = this.def.windup;
         } else if (this.airJumps > 0) {
           this.airJumps--;
           b.vy = -this.def.jump * 0.85;
           audio.play('jump', 0.6);
         }
       }
-      if (inp.jump && !b.onGround && b.vy > -260 && this.fuel > 0) {
+      if (this.windup > 0) {
+        this.windup -= dt;
+        this.crouch = Math.max(this.crouch, 0.9);
+        if (this.windup <= 0 && b.onGround) {
+          b.vy = -this.def.jump;
+          audio.play('jump', 0.7);
+          this.scene.effects.dustFx(b.x, b.y, 8);
+        }
+      }
+      if (inp.jump && !b.onGround && !this.boosting && b.vy > -260 && this.canBoost()) {
         thrusting = true;
-        this.fuel -= dt;
-        b.vy = Math.max(b.vy - (1980 + this.def.thrust) * dt, -this.def.thrust * 0.35);
+        this.drain(dt);
+        b.vy = Math.max(b.vy - (GRAVITY * MECH_GRAVITY + this.def.thrust) * dt, -this.def.thrust * 0.35);
+      }
+
+      // ブースト移動
+      if (inp.boostPressed && !this.boosting && this.canBoost() && this.landLock <= 0) {
+        this.boosting = true;
+        this.boostDir = moveX ? Math.sign(moveX) : this.facing;
+        b.vx = this.boostDir * Math.max(Math.abs(b.vx), this.def.boostSpeed * 0.55);
+        if (!b.onGround) b.vy = Math.min(b.vy, 0) * 0.2;
+        audio.play('boost');
+        this.scene.camShake(2);
+        this.scene.effects.dustFx(b.x - this.boostDir * 30, b.y, 10);
+      }
+      if (this.boosting) {
+        if (!inp.boost || !this.canBoost()) this.boosting = false;
+        else {
+          if (moveX && Math.sign(moveX) !== this.boostDir) this.boostDir = Math.sign(moveX);
+          this.drain(dt * (b.onGround ? 1 : BOOST.airDrain));
+          thrusting = true;
+          if (Math.random() < 0.5) audio.play('thrust', 0.5);
+        }
       }
 
       // 射撃
@@ -341,30 +379,82 @@ export class PlayerMech implements Hittable {
       this.braced = false;
     }
 
-    // 移動
-    const speed = this.def.speed * (this.shieldUp ? SHIELD.moveMul : 1) * (this.braced ? 0 : 1);
-    const target = this.state === 'piloted' ? moveX * speed : 0;
-    const acc = this.def.accel * (b.onGround ? 1 : 0.6);
-    b.vx = approach(b.vx, target, acc * dt);
+    // 移動（重い機体: ゆっくり加速し、滑って止まり、振り向きにも時間がかかる）
+    const prevVy = b.vy;
+    const prevVx = b.vx;
+    if (this.state !== 'piloted') this.boosting = false;
+    this.landLock = Math.max(0, this.landLock - dt);
+    if (this.boosting) {
+      b.vx = approach(b.vx, this.boostDir * this.def.boostSpeed, BOOST.accel * dt);
+      if (this.hopT > 0) b.gravityScale = MECH_GRAVITY * 0.5;
+      else {
+        b.gravityScale = b.onGround ? MECH_GRAVITY : 0.12;
+        if (!b.onGround) b.vy = approach(b.vy, 0, 1500 * dt);
+      }
+    } else {
+      b.gravityScale = MECH_GRAVITY;
+      const speed = this.def.speed * (this.shieldUp ? SHIELD.moveMul : 1) * (this.braced ? 0 : 1) * (this.windup > 0 ? 0.4 : 1);
+      const target = this.state === 'piloted' && this.landLock <= 0 ? moveX * speed : 0;
+      const sameDir = Math.sign(target) === Math.sign(b.vx) && Math.abs(target) >= Math.abs(b.vx);
+      let rate: number;
+      if (!b.onGround) rate = this.def.accel * 0.5;
+      else if (sameDir) rate = this.def.accel;
+      else if (Math.abs(b.vx) > this.def.speed * 1.1) rate = BOOST.skid; // ブースト後の惰性
+      else rate = this.def.brake;
+      b.vx = approach(b.vx, target, rate * dt);
+    }
+    // 振り向きは、地上では十分に減速してから
+    if (this.state === 'piloted' && inp && inp.aimAbs === null && moveX && !inp.fire && !this.shieldUp) {
+      const want = moveX > 0 ? 1 : -1;
+      if (want !== this.facing && (!b.onGround || this.boosting || Math.sign(b.vx) !== -want || Math.abs(b.vx) < 40)) this.facing = want;
+    }
     const lead = this.scene.leash(b, this.owner);
     if (lead) b.vx = 0;
     stepBody(b, dt, this.scene.solids);
+    // ブースト中に段差へ当たったら、噴射の勢いで乗り越える
+    this.hopT = Math.max(0, this.hopT - dt);
+    if (this.boosting && b.hitWall && this.hopT <= 0) {
+      b.vy = -this.def.jump;
+      this.hopT = 0.45;
+      this.scene.effects.dustFx(b.x, b.y, 6);
+    }
+    this.regen(dt, thrusting);
     if (b.onGround) {
-      this.fuel = Math.min(this.def.fuel, this.fuel + dt * 2);
       this.airJumps = this.def.airJumps;
-      if (!this.wasGround) {
-        this.crouch = 1;
-        audio.play('land', 0.5);
-        this.scene.effects.dustFx(b.x, b.y, 8);
+      if (!this.wasGround) this.land(prevVy);
+    }
+    // 滑りながら止まるときの火花
+    if (b.onGround && !this.boosting && Math.abs(b.vx) > this.def.speed * 1.1) {
+      this.skidT -= dt;
+      if (this.skidT <= 0) {
+        this.skidT = 0.05;
+        this.scene.effects.impact(b.x + Math.sign(b.vx) * 10, b.y - 4, 0.5);
+        this.scene.effects.dustFx(b.x, b.y, 1);
+        audio.play('skid', 0.4);
       }
     }
     this.wasGround = b.onGround;
-    this.crouch = Math.max(0, this.crouch - dt * 5);
+    this.crouch = Math.max(0, this.crouch - dt * 3.2);
     this.thrust = approach(this.thrust, thrusting ? 1 : 0, dt * 8);
     if (thrusting && Math.random() < 0.3) this.scene.effects.dustFx(b.x - this.facing * 20, b.y - 60, 1);
+    // 胴体は加速と逆へ遅れて傾く
+    const accel = (b.vx - prevVx) / dt;
+    const leanTarget = this.boosting
+      ? 0.2 * Math.sign(b.vx) * this.facing
+      : Phaser.Math.Clamp(-accel / 9000, -0.12, 0.12) * this.facing + Phaser.Math.Clamp(b.vx / 4000, -0.05, 0.05) * this.facing;
+    this.lean = approach(this.lean, leanTarget, dt * 0.9);
+    this.turnScale = approach(this.turnScale, this.facing, (2 / this.def.turnTime) * dt);
 
     const sp = Math.abs(b.vx);
-    if (b.onGround && sp > 10) this.walkPhase += (sp * dt) / (this.rig.d.height * 0.11) * this.facing * Math.sign(b.vx || 1);
+    if (b.onGround && sp > 10 && !this.boosting) {
+      // 足を滑らせないよう、歩幅と速度から歩く周期を決める
+      this.walkPhase += ((Math.PI * Math.min(sp, this.def.speed) * dt) / this.rig.stride) * this.facing * Math.sign(b.vx);
+      const idx = Math.floor(this.walkPhase / Math.PI);
+      if (idx !== this.stepIdx) {
+        this.stepIdx = idx;
+        this.footstep();
+      }
+    }
     // 撃破状態の煙
     if (this.state === 'wreck') {
       this.smokeT -= dt;
@@ -383,16 +473,17 @@ export class PlayerMech implements Hittable {
     // 見た目
     this.rig.setPosition(b.x, b.y);
     this.rig.facing = this.facing;
-    this.rig.scaleX = this.facing;
+    this.rig.scaleX = Math.abs(this.turnScale) < 0.15 ? 0.15 * Math.sign(this.turnScale || this.facing) : this.turnScale;
     this.rig.update(dt, {
       aim: this.aim,
       walkPhase: this.walkPhase,
-      speed01: b.onGround ? Phaser.Math.Clamp(sp / this.def.speed, 0, 1) : 0,
+      speed01: b.onGround && !this.boosting ? Phaser.Math.Clamp(sp / this.def.speed, 0, 1) : 0,
       airborne: !b.onGround,
       vy: b.vy,
       crouch: this.crouch,
       recoil: this.recoil,
-      lean: Phaser.Math.Clamp(b.vx / 3000, -0.08, 0.08) * this.facing,
+      lean: this.lean,
+      boost: this.boosting ? 1 : 0,
       wreck: this.state === 'wreck',
       shieldUp: this.shieldUp,
       braced: this.braced,
@@ -402,6 +493,55 @@ export class PlayerMech implements Hittable {
     this.label.setPosition(b.x, b.y - b.h - 18);
     this.label.setVisible(this.state === 'piloted');
     this.drawBeam();
+  }
+
+  canBoost() {
+    return !this.overheat && this.gauge > 0;
+  }
+
+  private drain(amount: number) {
+    this.gauge -= amount;
+    this.regenWait = BOOST.regenDelay;
+    if (this.gauge <= 0) {
+      this.gauge = 0;
+      this.overheat = true;
+      this.boosting = false;
+      audio.play('overheat');
+      this.scene.effects.smokePuff(this.body.x - this.facing * 20, this.body.y - this.body.h * 0.7, 4);
+    }
+  }
+
+  private regen(dt: number, using: boolean) {
+    if (using) return;
+    if (this.regenWait > 0) {
+      this.regenWait -= dt;
+      return;
+    }
+    const rate = BOOST.regen * (this.body.onGround ? 1 : 0.4);
+    this.gauge = Math.min(this.def.boostGauge, this.gauge + rate * dt);
+    if (this.overheat && this.gauge >= this.def.boostGauge * BOOST.overheatResume) this.overheat = false;
+  }
+
+  /** 着地。落下が速いほど重く沈み、しばらく動けない */
+  private land(vy: number) {
+    const b = this.body;
+    const heavy = vy > BOOST.heavyFall;
+    this.crouch = heavy ? 1 : 0.55;
+    if (heavy) {
+      this.landLock = BOOST.landRecover * Math.min(1.6, vy / 1000);
+      this.scene.camShake(3 + this.def.stepShake * 2);
+    }
+    audio.play('land', heavy ? 1 : 0.6);
+    this.scene.effects.dustFx(b.x, b.y, heavy ? 14 : 6);
+  }
+
+  /** 一歩ごとの足音と地響き */
+  private footstep() {
+    const b = this.body;
+    const fx = b.x + this.facing * Math.sign(b.vx) * this.rig.stride * 0.4;
+    audio.play('step', 0.4 + this.def.stepShake * 0.35);
+    this.scene.camShake(this.def.stepShake);
+    this.scene.effects.dustFx(fx, b.y, 3);
   }
 
   private shoot() {
@@ -627,8 +767,8 @@ export class Pilot implements Hittable {
 
 function idleInput(inp: PlayerInput): PlayerInput {
   return {
-    ...inp, moveX: 0, moveY: 0, aimAbs: null, jump: false, fire: false, skill: false, interact: false,
-    jumpPressed: false, skillPressed: false, interactPressed: false, firePressed: false,
+    ...inp, moveX: 0, moveY: 0, aimAbs: null, jump: false, boost: false, fire: false, skill: false, interact: false,
+    jumpPressed: false, boostPressed: false, skillPressed: false, interactPressed: false, firePressed: false,
   };
 }
 

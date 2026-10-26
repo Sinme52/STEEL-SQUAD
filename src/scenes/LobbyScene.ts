@@ -85,7 +85,7 @@ export class LobbyScene extends Phaser.Scene {
     ui.add(this.add.text(24, 520, s.roleDesc[sl.role], { fontFamily: JP, fontSize: '20px', color: '#ddd', wordWrap: { width: w - 48, useAdvancedWrap: true }, lineSpacing: 6 }));
     // 能力の目安
     const stat = this.add.graphics();
-    const rows: [string, number][] = [['ARMOR', def.hp / 460], ['SPEED', def.speed / 340], ['BOOST', def.fuel / 1.6]];
+    const rows: [string, number][] = [['ARMOR', def.hp / 460], ['SPEED', def.speed / 200], ['BOOST', def.boostGauge / 2.6]];
     rows.forEach(([, v], k) => {
       stat.fillStyle(0x222222, 1);
       stat.fillRect(130, 642 + k * 26, 260, 12);

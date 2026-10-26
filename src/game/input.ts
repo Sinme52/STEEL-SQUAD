@@ -8,6 +8,7 @@ export interface PadState {
   moveY: number;
   aimAbs: number | null; // 右スティックの向き（ラジアン、画面座標）
   jump: boolean;
+  boost: boolean;
   fire: boolean;
   skill: boolean;
   interact: boolean;
@@ -21,6 +22,7 @@ export interface PadState {
 
 export interface PlayerInput extends PadState {
   jumpPressed: boolean;
+  boostPressed: boolean;
   skillPressed: boolean;
   interactPressed: boolean;
   pausePressed: boolean;
@@ -35,18 +37,18 @@ export interface PlayerInput extends PadState {
 const KB: Record<'kb1' | 'kb2', Record<string, string[]>> = {
   kb1: {
     left: ['KeyA'], right: ['KeyD'], up: ['KeyW'], down: ['KeyS'],
-    jump: ['Space'], fire: ['KeyJ'], skill: ['KeyK'], interact: ['KeyL'],
+    jump: ['Space'], boost: ['ShiftLeft'], fire: ['KeyJ'], skill: ['KeyK'], interact: ['KeyL'],
     pause: ['Escape'], back: ['Escape', 'Backspace'],
   },
   kb2: {
     left: ['ArrowLeft'], right: ['ArrowRight'], up: ['ArrowUp'], down: ['ArrowDown'],
-    jump: ['Numpad0', 'ShiftRight'], fire: ['Numpad1', 'Comma'], skill: ['Numpad2', 'Period'],
+    jump: ['Numpad0', 'ShiftRight'], boost: ['Quote', 'Numpad4'], fire: ['Numpad1', 'Comma'], skill: ['Numpad2', 'Period'],
     interact: ['Numpad3', 'Slash'], pause: ['Enter', 'NumpadEnter'], back: ['Delete', 'NumpadDecimal'],
   },
 };
 
 const empty = (): PadState => ({
-  moveX: 0, moveY: 0, aimAbs: null, jump: false, fire: false, skill: false, interact: false,
+  moveX: 0, moveY: 0, aimAbs: null, jump: false, boost: false, fire: false, skill: false, interact: false,
   pause: false, back: false, left: false, right: false, up: false, down: false,
 });
 
@@ -96,7 +98,7 @@ class InputManager {
       s.left = k('left'); s.right = k('right'); s.up = k('up'); s.down = k('down');
       s.moveX = (s.right ? 1 : 0) - (s.left ? 1 : 0);
       s.moveY = (s.down ? 1 : 0) - (s.up ? 1 : 0);
-      s.jump = k('jump'); s.fire = k('fire'); s.skill = k('skill'); s.interact = k('interact');
+      s.jump = k('jump'); s.boost = k('boost'); s.fire = k('fire'); s.skill = k('skill'); s.interact = k('interact');
       s.pause = k('pause'); s.back = k('back');
       return s;
     }
@@ -114,7 +116,7 @@ class InputManager {
     s.left = s.moveX < -0.5; s.right = s.moveX > 0.5; s.up = s.moveY < -0.5; s.down = s.moveY > 0.5;
     const rx = p.axes[2] ?? 0, ry = p.axes[3] ?? 0;
     if (Math.hypot(rx, ry) > 0.45) s.aimAbs = Math.atan2(ry, rx);
-    s.jump = b(0); s.interact = b(1); s.fire = b(2) || b(7); s.skill = b(3) || b(5) || b(6);
+    s.jump = b(0); s.boost = b(4) || b(10); s.interact = b(1); s.fire = b(2) || b(7); s.skill = b(3) || b(5) || b(6);
     s.pause = b(9); s.back = b(1) || b(8);
     return s;
   }
@@ -125,6 +127,7 @@ class InputManager {
     return {
       ...c,
       jumpPressed: c.jump && !p.jump,
+      boostPressed: c.boost && !p.boost,
       skillPressed: c.skill && !p.skill,
       interactPressed: c.interact && !p.interact,
       pausePressed: c.pause && !p.pause,

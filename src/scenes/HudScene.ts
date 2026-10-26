@@ -76,8 +76,8 @@ export class HudScene extends Phaser.Scene {
       }).setOrigin(0.5, 1);
       this.tweens.add({ targets: hint, alpha: 0, delay: 14000, duration: 800, onComplete: () => hint.destroy() });
     });
-    this.events.on('pause', () => this.openPause());
-    this.events.once('shutdown', () => this.events.off('pause'));
+    this.events.on('open-pause-menu', () => this.openPause());
+    this.events.once('shutdown', () => this.events.off('open-pause-menu'));
   }
 
   private makePanel(p: Player, x: number, y: number, w: number): Panel {
@@ -130,11 +130,16 @@ export class HudScene extends Phaser.Scene {
     };
     const m = p.mech;
     // 耐久
-    if (p.state === 'pilot' && p.pilot) bar(40, 14, p.pilot.hp / 40, 0xffd080);
+    if (p.state === 'pilot' && p.pilot) bar(36, 13, p.pilot.hp / 40, 0xffd080);
     else if (m) {
       const r = m.hp / m.maxHp;
-      bar(40, 14, r, r > 0.5 ? 0x7cd96a : r > 0.25 ? 0xf2c94c : 0xe0483a);
-    } else bar(40, 14, 0, 0);
+      bar(36, 13, r, r > 0.5 ? 0x7cd96a : r > 0.25 ? 0xf2c94c : 0xe0483a);
+    } else bar(36, 13, 0, 0);
+    // ブーストゲージ（オーバーヒート中は赤く点滅）
+    if (m) {
+      const blink = m.overheat && Math.floor(this.time.now / 150) % 2 === 0;
+      bar(53, 6, m.gauge / p.def.boostGauge, m.overheat ? (blink ? 0xff3020 : 0x802018) : m.boosting ? 0xffffff : 0xb8dcff);
+    } else bar(53, 6, 0, 0);
     // スキル
     let skill = 1, skillColor = p.color;
     if (m) {
@@ -145,20 +150,22 @@ export class HudScene extends Phaser.Scene {
       else skill = 1 - m.skillCd / p.def.skillCooldown;
       if (skill < 1 && p.role !== 'assault' && p.role !== 'support') skillColor = 0x777777;
     }
-    bar(60, 8, skill, skillColor);
+    bar(63, 6, skill, skillColor);
     // 武器の熟練度
     const xp = save.weaponXp[p.role];
     const lv = weaponLevel(xp);
-    bar(74, 5, lv >= MAX_WEAPON_LV ? 1 : weaponLevelProgress(xp), 0x9ad0ff);
+    bar(74, 4, lv >= MAX_WEAPON_LV ? 1 : weaponLevelProgress(xp), 0x9ad0ff);
     pn.lv.setText(`${s.weaponLv} ${lv}`);
     // 状態
     let st = '';
     if (p.state === 'pilot') st = m?.state === 'wreck' ? `${s.downed} ${Math.floor((m.repair || 0) * 100)}%` : s.ejected;
     else if (p.state === 'kia') st = p.respawn > 0 ? `${s.kia} ${Math.ceil(p.respawn)}` : 'KIA';
+    else if (m?.overheat) st = 'OVERHEAT';
+    else if (m?.boosting) st = 'BOOST';
     else if (m?.braced) st = 'BRACE';
     else if (m && m.marked > 0) st = '';
     pn.status.setText(st);
-    pn.status.setColor(p.state === 'kia' ? '#ff6050' : '#ffd080');
+    pn.status.setColor(p.state === 'kia' || m?.overheat ? '#ff6050' : '#ffd080');
   }
 
   private updateBoss() {

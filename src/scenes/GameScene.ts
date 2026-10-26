@@ -35,7 +35,7 @@ interface Wave2 {
 
 function held(i: PlayerInput): PlayerInput {
   return {
-    ...i, jumpPressed: false, skillPressed: false, interactPressed: false, pausePressed: false, backPressed: false,
+    ...i, jumpPressed: false, boostPressed: false, skillPressed: false, interactPressed: false, pausePressed: false, backPressed: false,
     leftPressed: false, rightPressed: false, upPressed: false, downPressed: false, firePressed: false,
   };
 }
@@ -233,7 +233,7 @@ export class GameScene extends Phaser.Scene {
     for (const p of this.players) {
       if (input.get(p.device).pausePressed) {
         this.scene.pause();
-        this.scene.get('Hud').events.emit('pause');
+        this.scene.get('Hud').events.emit('open-pause-menu');
         return;
       }
     }

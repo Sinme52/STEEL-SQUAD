@@ -3,7 +3,8 @@ import { settings } from './save';
 
 type Sfx =
   | 'mg' | 'shell' | 'rifle' | 'smg' | 'pistol' | 'enemy' | 'missile' | 'explode' | 'bigExplode' | 'hit'
-  | 'shield' | 'jump' | 'eject' | 'repair' | 'ui' | 'uiOk' | 'alarm' | 'lvup' | 'gate' | 'recon' | 'land' | 'pickup';
+  | 'shield' | 'jump' | 'eject' | 'repair' | 'ui' | 'uiOk' | 'alarm' | 'lvup' | 'gate' | 'recon' | 'land' | 'pickup'
+  | 'step' | 'boost' | 'thrust' | 'skid' | 'overheat';
 
 class Audio {
   ctx: AudioContext | null = null;
@@ -89,7 +90,10 @@ class Audio {
     if (!this.ctx || this.ctx.state !== 'running') return;
     const now = this.ctx.currentTime;
     // 同じ音が同時に鳴りすぎないように間引く
-    const minGap: Partial<Record<Sfx, number>> = { mg: 0.05, smg: 0.06, enemy: 0.05, hit: 0.03, explode: 0.05, shield: 0.06, repair: 0.12 };
+    const minGap: Partial<Record<Sfx, number>> = {
+      mg: 0.05, smg: 0.06, enemy: 0.05, hit: 0.03, explode: 0.05, shield: 0.06, repair: 0.12,
+      step: 0.06, thrust: 0.09, skid: 0.07,
+    };
     const lastT = this.last.get(name) ?? -1;
     if (now - lastT < (minGap[name] ?? 0.02)) return;
     this.last.set(name, now);
@@ -139,9 +143,30 @@ class Audio {
       case 'jump':
         this.noiseHit(now, 0.25, 300, 1, 0.25 * v, 'lowpass', undefined, 1200);
         break;
+      case 'step':
+        // 鉄の脚が地面を踏む: 低いドスンと、金属のきしみ
+        this.tone(now, 'sine', 95, 32, 0.22, 0.55 * v);
+        this.noiseHit(now, 0.14, 420, 1, 0.3 * v, 'lowpass', undefined, 90);
+        this.tone(now + 0.02, 'square', 180, 140, 0.05, 0.035 * v);
+        break;
+      case 'boost':
+        this.noiseHit(now, 0.5, 500, 1.2, 0.55 * v, 'bandpass', undefined, 3200);
+        this.tone(now, 'sawtooth', 70, 140, 0.35, 0.12 * v);
+        break;
+      case 'thrust':
+        this.noiseHit(now, 0.12, 1400, 0.9, 0.16 * v, 'bandpass');
+        break;
+      case 'skid':
+        this.noiseHit(now, 0.09, 5200, 2, 0.12 * v, 'highpass');
+        break;
+      case 'overheat':
+        this.noiseHit(now, 0.6, 3000, 1, 0.3 * v, 'highpass', undefined, 600);
+        this.tone(now, 'square', 880, 440, 0.25, 0.06 * v);
+        this.tone(now + 0.15, 'square', 880, 440, 0.25, 0.06 * v);
+        break;
       case 'land':
-        this.tone(now, 'sine', 80, 40, 0.15, 0.4 * v);
-        this.noiseHit(now, 0.12, 500, 1, 0.2 * v);
+        this.tone(now, 'sine', 70, 25, 0.35, 0.7 * v);
+        this.noiseHit(now, 0.25, 600, 1, 0.35 * v, 'lowpass', undefined, 80);
         break;
       case 'eject':
         this.noiseHit(now, 0.4, 400, 1, 0.4 * v, 'bandpass', undefined, 3000);

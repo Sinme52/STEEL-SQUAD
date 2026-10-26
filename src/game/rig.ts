@@ -30,6 +30,7 @@ export interface Pose {
   shieldUp: boolean;
   braced: boolean;
   thrust: number; // 0..1
+  boost?: number; // 0..1 ブースト移動中
 }
 
 export class MechRig extends Phaser.GameObjects.Container {
@@ -88,6 +89,11 @@ export class MechRig extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
+  /** 一歩の幅。歩く周期の計算にも使う */
+  get stride() {
+    return this.d.height * 0.3;
+  }
+
   hitFlash() {
     this.flash = 0.05;
   }
@@ -133,10 +139,11 @@ export class MechRig extends Phaser.GameObjects.Container {
   update(dt: number, p: Pose) {
     const d = this.d;
     const legLen = d.thigh + d.shin;
-    const stride = d.height * 0.22;
-    // 腰の高さ（足首から）
-    let hipH = legLen * (p.wreck ? 0.45 : 0.93 - p.crouch * 0.18 - (p.braced ? 0.08 : 0));
-    const bob = p.airborne ? 0 : Math.abs(Math.sin(p.walkPhase)) * 4 * p.speed01;
+    const stride = this.stride;
+    const boost = p.boost ?? 0;
+    // 腰の高さ（足首から）。重い機体らしく、足が着く瞬間に腰が沈む
+    let hipH = legLen * (p.wreck ? 0.45 : 0.92 - p.crouch * 0.2 - (p.braced ? 0.08 : 0) - boost * 0.1);
+    const bob = p.airborne || boost ? 0 : (1 - Math.abs(Math.sin(p.walkPhase))) * 7 * p.speed01;
     hipH -= bob;
     const ground = -d.footH;
     const hip = { x: 0, y: ground - hipH };
@@ -145,6 +152,13 @@ export class MechRig extends Phaser.GameObjects.Container {
     if (p.wreck) {
       nearFoot = { x: 34, y: ground };
       farFoot = { x: -20, y: ground };
+    } else if (boost > 0) {
+      // ブースト: 足を前後に開き、地面すれすれを滑る
+      const lift = p.airborne ? 26 : 5;
+      nearFoot = { x: 22, y: ground - lift };
+      farFoot = { x: -26, y: ground - lift + 4 };
+      nearRot = -0.15;
+      farRot = 0.1;
     } else if (p.airborne) {
       const tuck = Phaser.Math.Clamp(-p.vy / 900, -0.4, 1);
       nearFoot = { x: 16, y: ground - 18 - tuck * 18 };
@@ -154,23 +168,26 @@ export class MechRig extends Phaser.GameObjects.Container {
     } else {
       const s = p.speed01;
       const ph = p.walkPhase;
+      // 振り出し（sin>0）で前へ、接地中（sin<0）は後ろへ流れる
       const leg = (phase: number) => {
-        const x = Math.cos(phase) * stride * 0.5 * s;
-        const lift = Math.max(0, Math.sin(phase)) * 22 * s;
+        const x = -Math.cos(phase) * stride * 0.5 * s;
+        const lift = Math.max(0, Math.sin(phase)) * 15 * s;
         return { x, y: ground - lift };
       };
       nearFoot = leg(ph);
       farFoot = leg(ph + Math.PI);
       nearFoot.x += 10 * (1 - s) + (p.braced ? 18 : 0);
       farFoot.x -= 12 * (1 - s) + (p.braced ? 14 : 0);
-      nearRot = Math.max(0, Math.sin(ph)) * -0.25 * s;
-      farRot = Math.max(0, Math.sin(ph + Math.PI)) * -0.25 * s;
+      nearRot = Math.max(0, Math.sin(ph)) * -0.2 * s;
+      farRot = Math.max(0, Math.sin(ph + Math.PI)) * -0.2 * s;
     }
     this.placeLeg('far', { x: hip.x - 4, y: hip.y }, farFoot, farRot);
     this.placeLeg('', hip, nearFoot, nearRot);
 
     const torso = this.parts.torso;
-    const lean = p.wreck ? 0.35 : p.lean + p.aim * 0.08;
+    // 一歩ごとに胴体がわずかに揺れる
+    const sway = p.airborne || boost ? 0 : Math.sin(p.walkPhase * 2) * 0.012 * p.speed01;
+    const lean = p.wreck ? 0.35 : p.lean + p.aim * 0.08 + sway;
     torso.setPosition(hip.x, hip.y);
     torso.setRotation(lean);
 
@@ -219,8 +236,10 @@ export class MechRig extends Phaser.GameObjects.Container {
     this.flame.setVisible(p.thrust > 0.05 && !p.wreck);
     if (this.flame.visible) {
       this.flame.setPosition(hip.x + tx * cs - ty * sn, hip.y + tx * sn + ty * cs);
-      this.flame.setRotation(lean + 0.35);
-      this.flame.setScale(0.5 + Math.random() * 0.25, (0.6 + Math.random() * 0.5) * p.thrust);
+      // ブースト中は炎を後ろへ大きく噴く
+      this.flame.setRotation(lean + 0.35 + boost * 0.95);
+      const big = 1 + boost * 0.7;
+      this.flame.setScale((0.5 + Math.random() * 0.25) * big, (0.6 + Math.random() * 0.5) * p.thrust * big);
     }
 
     // 被弾の白フラッシュ

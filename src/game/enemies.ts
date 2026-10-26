@@ -92,6 +92,7 @@ export class EnemyMech extends Enemy {
   private strafeT = 0;
   private crouch = 0;
   private wasGround = false;
+  private stepIdx = 0;
 
   constructor(scene: GameScene, x: number, y: number, drop = false) {
     super(scene, ENEMY_DEFS.mech.hp, ENEMY_DEFS.mech.score);
@@ -165,7 +166,7 @@ export class EnemyMech extends Enemy {
         }
       }
     }
-    b.vx = approach(b.vx, move * ENEMY_DEFS.mech.speed, 1200 * dt);
+    b.vx = approach(b.vx, move * ENEMY_DEFS.mech.speed, 450 * dt);
     stepBody(b, dt, this.scene.solids);
     if (b.onGround && !this.wasGround) {
       this.crouch = 1;
@@ -173,14 +174,22 @@ export class EnemyMech extends Enemy {
     }
     this.wasGround = b.onGround;
     this.crouch = Math.max(0, this.crouch - dt * 5);
-    if (b.onGround) this.walk += (Math.abs(b.vx) * dt) / 20 * Math.sign(b.vx * this.facing || 1);
+    if (b.onGround && Math.abs(b.vx) > 10) {
+      this.walk += ((Math.PI * Math.abs(b.vx) * dt) / this.rig.stride) * Math.sign(b.vx * this.facing);
+      const idx = Math.floor(this.walk / Math.PI);
+      if (idx !== this.stepIdx) {
+        this.stepIdx = idx;
+        audio.play('step', 0.25);
+        this.scene.effects.dustFx(b.x, b.y, 2);
+      }
+    }
     this.rig.setPosition(b.x, b.y);
     this.rig.scaleX = this.facing;
     this.rig.facing = this.facing;
     this.rig.update(dt, {
       aim: this.aim, walkPhase: this.walk, speed01: b.onGround ? Math.min(1, Math.abs(b.vx) / ENEMY_DEFS.mech.speed) : 0,
       airborne: !b.onGround, vy: b.vy, crouch: this.crouch, recoil: 0, lean: 0, wreck: false, shieldUp: false,
-      braced: false, thrust: this.dropping ? 1 : 0,
+      braced: false, thrust: this.dropping ? 1 : 0, boost: 0,
     });
     this.rig.setBaseTint(this.marked > 0 ? 0xffb0b0 : 0xffffff);
   }
