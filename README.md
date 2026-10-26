@@ -21,6 +21,15 @@ npm run build
 npm run electron     # --windowed を付けるとウィンドウ表示
 ```
 
+配布用に書き出す場合（`release/` に出力）:
+
+```bash
+npm run dist:mac     # Windows は dist:win、Linux は dist:linux
+```
+
+書き出しに使う electron-builder は、通常の `npm install` では入れず、このときだけ `npx` で取得します。
+electron-builder が使っている古いライブラリの警告（inflight / rimraf / glob / boolean）はこのときだけ表示されますが、配布物には含まれません。
+
 ### 操作
 
 | 操作 | キーボード1 | キーボード2 | ゲームパッド |
