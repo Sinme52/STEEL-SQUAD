@@ -73,7 +73,7 @@ export const PILOT = {
   weapon: { interval: 0.25, damage: 6, speed: 1300, spread: 0.03, kind: 'pistol' } as WeaponDef,
 };
 
-// 武器の熟練度（ガンハザードの武器レベルへのオマージュ）。与えたダメージで上がる
+// 武器の熟練度（使い込むほど育つ、昔ながらの武器レベル）。与えたダメージで上がる
 export const WEAPON_XP = [0, 600, 1800, 4000, 8000];
 export const MAX_WEAPON_LV = WEAPON_XP.length;
 export function weaponLevel(xp: number): number {
